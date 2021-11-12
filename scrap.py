@@ -1,28 +1,47 @@
 from bs4 import BeautifulSoup
 import requests
 
-#print( "HEREEEEEE" )
+class Product:
+    productType = ""
+    url = ""
+    productName = ""
+    offer = 0
+    productPrice = 0
+    salePrice = 0
+    availability = 0
 
-html_text = requests.get( 'https://www.markastok.com/buratti-slim-fit-fermuarli-dik-yaka-erkek-mont-556b79000-siyah' ).text
-#html_text = requests.get( 'https://www.markastok.com/navigli-outdoor-erkek-ayakkabi-5601953-siyah-beyaz' ).text
+def getPageType( soup ):
+    noStockClass = "popupWin box productFunction popupHide priceAlertLink"
 
-soup = BeautifulSoup( html_text, 'lxml' )
+    if( soup.find( 'div', class_="detay-indirim" ) != None ):
+        return "available-product"
+    if( soup.find( 'a', class_=noStockClass ) != None ):
+        return "no-stock"
+    return "unknown-type"
 
-productName = soup.find( 'h1', class_="fl col-12 product-name" ).text.strip()
-offer = soup.find( 'div', class_="detay-indirim" ).text
-allPrices = soup.find( 'div', class_="fl priceLine" ).find_all( 'span' )
+# 'https://www.markastok.com/buratti-slim-fit-fermuarli-dik-yaka-erkek-mont-556b79000-siyah'
+# 'https://www.markastok.com/navigli-outdoor-erkek-ayakkabi-5601953-siyah-beyaz'
+def getProduct( url ):
+    html_text = requests.get( url ).text
+    soup = BeautifulSoup( html_text, 'lxml' )
+    product = Product
 
-productPrice = allPrices[1].text
-salePrice = allPrices[3].text
+    product.productType = getPageType( soup )
 
-#print( soup )
-print( productName )
-print( offer )
-print( productPrice )
-print( salePrice )
+    if( product.productType == "no-stock" ):
+        product.productName = soup.find( 'h1', class_="fl col-12 product-name" ).text.strip()
+    
+    if( product.productType == "available-product" ):
+        product.productName = soup.find( 'h1', class_="fl col-12 product-name" ).text.strip()
+        product.offer = soup.find( 'div', class_="detay-indirim" ).text
+        allPrices = soup.find( 'div', class_="fl priceLine" ).find_all( 'span' )
+        product.productPrice = allPrices[1].text
+        product.salePrice = allPrices[3].text
+    return product
 
-#for price in allPrices: 
-    #print( price.text )
+
+p = getProduct( 'https://www.markastok.com/erkek-mont?ps=10' )
+print( p.productType )
 
 
 
