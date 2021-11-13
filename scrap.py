@@ -37,10 +37,19 @@ def getProduct( url ):
         allPrices = soup.find( 'div', class_="fl priceLine" ).find_all( 'span' )
         product.productPrice = allPrices[1].text
         product.salePrice = allPrices[3].text
+
+        sizes = soup.find( 'div', class_="new-size-variant fl col-12 ease variantList" )
+        numAvailable = len( sizes.find_all( 'a', class_ = "col box-border" ) )
+        numOutof = len( sizes.find_all( 'a', class_ = "col box-border passive" ) )
+        product.availability = 100 * numAvailable / (numAvailable + numOutof)
+        product.availability = round( product.availability, 2 )
+        
+
+        print( product.availability )
     return product
 
 
-p = getProduct( 'https://www.markastok.com/erkek-mont?ps=10' )
+p = getProduct( 'https://www.markastok.com/buratti-slim-fit-fermuarli-dik-yaka-erkek-mont-556b79000-siyah' )
 print( p.productType )
 
 
