@@ -9,6 +9,8 @@ class Product:
     productPrice = 0
     salePrice = 0
     availability = 0
+    productCode = ""
+
 
 def getPageType( soup ):
     noStockClass = "popupWin box productFunction popupHide priceAlertLink"
@@ -25,11 +27,16 @@ def getProduct( url ):
     html_text = requests.get( url ).text
     soup = BeautifulSoup( html_text, 'lxml' )
     product = Product
+    product.url = url
 
     product.productType = getPageType( soup )
 
     if( product.productType == "no-stock" ):
         product.productName = soup.find( 'h1', class_="fl col-12 product-name" ).text.strip()
+        product.availability = 0
+        for divItem in soup.find( 'div', class_="product-feature-content" ):
+            productCode = divItem
+        product.productCode = productCode
     
     if( product.productType == "available-product" ):
         product.productName = soup.find( 'h1', class_="fl col-12 product-name" ).text.strip()
@@ -44,13 +51,16 @@ def getProduct( url ):
         product.availability = 100 * numAvailable / (numAvailable + numOutof)
         product.availability = round( product.availability, 2 )
         
+        for divItem in soup.find( 'div', class_="product-feature-content" ):
+            productCode = divItem
+        product.productCode = productCode
+        #print( productCode )
 
-        print( product.availability )
     return product
 
 
-p = getProduct( 'https://www.markastok.com/buratti-slim-fit-fermuarli-dik-yaka-erkek-mont-556b79000-siyah' )
-print( p.productType )
+#p = getProduct( 'https://www.markastok.com/buratti-fermuarli-ekoseli-cift-cep-oduncu-erkek-gomlek-cf21w113291-bordo' )
+#print( p.availability )
 
 
 
