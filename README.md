@@ -14,7 +14,7 @@ Lerning app script syntax. Google documentations are not good enough.
 ## Benefits of project
 - Learning web wscrapping in python
 - Experiencing google-sheets and gooogle-apps-script
-- Using copmarator function for custom sorts
+- Using comparator function for custom sorts
 - Lerning what exactly API is
 
 ## Answers of the additional questions
