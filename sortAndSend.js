@@ -1,3 +1,4 @@
+//x and y are rows in gooogle sheet. x[2] means third cell of the row.
 compare = function (x, y) {
     var num1 = parseFloat( x[2].substring(1) );
     var num2 = parseFloat( y[2].substring(1) );
