@@ -10,7 +10,8 @@ client = gspread.authorize(creds)
 sheet = client.open("AnalyticaHouse").sheet1  # Open the spreadhseet
 fields = [ "URL", "Product Name", "Availability", "Offer", "Sale Price", "Product Price", "Product Code" ]
 
-def insertProduct( product, sheet ):
+#append given product to the given google sheet.
+def appendProduct( product, sheet ):
     productRow = [ 
                     product.url,
                     product.productName,
@@ -25,15 +26,12 @@ def insertProduct( product, sheet ):
 
 
 
+#open URL's.xlsx file. Fill all urls to allUrls[] list
 wb = load_workbook(filename = 'URL\'s.xlsx')
 ws = wb.active
-#ws['B1'] = 101
-
 allUrls = []
 i = 1
 currentUrl =  ws['A1'].value
-
-
 while( currentUrl != None ):
     #print( currentUrl )
     allUrls.append( "https://www.markastok.com" + currentUrl )
@@ -41,13 +39,12 @@ while( currentUrl != None ):
     currentUrl = ws[ 'A' + str(i) ].value
 
 
-
-
+#retrieve and send all product informations to the google sheet.
 for i in range( 0, len( allUrls ) ):
     currentProduct = getProduct( allUrls[i] )
     currentType = currentProduct.productType
     if( currentType == "available-product" or currentType == "no-stock" ):
-        insertProduct( currentProduct, sheet )
+        appendProduct( currentProduct, sheet )
 
 
 
